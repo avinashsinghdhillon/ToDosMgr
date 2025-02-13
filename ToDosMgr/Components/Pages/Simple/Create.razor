@@ -16,7 +16,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
-                <label for="itemname" class="form-label">ItemName:</label> 
+                <label for="itemname" class="form-label">To Do:</label> 
                 <InputText id="itemname" @bind-Value="ToDoItem.ItemName" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => ToDoItem.ItemName" class="text-danger" /> 
             </div>        

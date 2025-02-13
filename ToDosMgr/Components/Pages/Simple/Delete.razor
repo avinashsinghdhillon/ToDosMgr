@@ -18,8 +18,8 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">ItemName</dt>
-            <dd class="col-sm-10">@todoitem.ItemName</dd>
+            <dt class="col-sm-2">To Do</dt>
+            <dd class="col-sm-10 @deleteAnimation">@todoitem.ItemName</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Done</dt>
@@ -34,6 +34,7 @@
 
 @code {
     private ToDoItem? todoitem;
+    private string deleteAnimation = "";
 
     [SupplyParameterFromQuery]
     private Guid Id { get; set; }
@@ -53,10 +54,17 @@
     {
         //imitate an async operation delay
         await Task.Delay(2000);
+        Animate(true);
 
         using var context = DbFactory.CreateDbContext();
         context.ToDoItem.Remove(todoitem!);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/simple");
+    }
+
+    private void Animate(bool deleting)
+    {
+        //animate to show deletion via css isolation
+        deleteAnimation = "animateCell";
     }
 }

@@ -1,0 +1,7 @@
+﻿.radioLables {
+    width: 100px;
+    border: 2px solid purple;
+    background-color: plum;
+    text-align:center;
+    border-radius: 10px;
+}

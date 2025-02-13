@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/simple"
+@rendermode InteractiveServer
 
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -22,7 +23,25 @@
 <QuickGrid Class="table" Items="context.ToDoItem">
     <PropertyColumn Property="todoitem => todoitem.ItemName" Title="To Do" />
     <PropertyColumn Property="todoitem => todoitem.Done" Title="Done" />
+    <div>
+        <label class="radioLables"> 
+            All
+            <input checked="true" type="radio" name="filter" title="All" @onchange="clearfilter" @onclick="updateFilterLabel" hidden="true">
+        </label>
 
+        <label class="radioLables">
+            Done
+            <input type="radio" name="filter" title="Done" @onchange="onchangetrue" @onclick="updateFilterLabel" hidden="true">
+        </label>
+
+        <label class="radioLables">
+            Pending
+            <input type="radio" name="filter" title="Pending" @onchange="onchangefalse" @onclick="updateFilterLabel" hidden="true">
+        </label>
+        <label class="filterName">
+            Filter By: @filterSelected
+        </label>
+    </div>
     <TemplateColumn Context="todoitem">
         <a href="@($"simple/edit?id={todoitem.Id}")">Edit</a> |
         <a href="@($"simple/details?id={todoitem.Id}")">Details</a> |
@@ -30,13 +49,25 @@
     </TemplateColumn>
 </QuickGrid>
 
+
 @code {
     private ToDosMgrContext context = default!;
+    private ToDoItem filteredItems = new ToDoItem();
+    private string? filterSelected = "All";
 
-    protected override void OnInitialized()
-    {
-        context = DbFactory.CreateDbContext();
-    }
+
+
+    protected override void OnInitialized() => context = DbFactory.CreateDbContext();
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    // this is not working as intended
+    private void clearfilter() => filteredItems = (ToDoItem)context.ToDoItem.Where(s => s.Done.Equals(true || false));
+    private void onchangetrue() => filteredItems = (ToDoItem)context.ToDoItem.Where(s => s.Done.Equals(true));
+    private void onchangefalse() => filteredItems = (ToDoItem)context.ToDoItem.Where(s => s.Done.Equals(false));
+
+    private void updateFilterLabel(MouseEventArgs e)
+    {
+        filterSelected = e.ToString(); //unsure on how to get the value of the radio button or the label.
+    }
 }

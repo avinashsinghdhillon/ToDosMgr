@@ -1,0 +1,42 @@
+﻿@page "/"
+@page "/simple"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using ToDosMgr
+@using ToDosMgr.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<ToDosMgr.Data.ToDosMgrContext> DbFactory
+
+<PageTitle>Simple</PageTitle>
+
+
+<h1>Basic List Manager</h1>
+
+<h3>This is a simple and non-persistent To-Do Manager</h3>
+
+<p>
+    <a href="simple/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.ToDoItem">
+    <PropertyColumn Property="todoitem => todoitem.ItemName" Title="To Do" />
+    <PropertyColumn Property="todoitem => todoitem.Done" Title="Done" />
+
+    <TemplateColumn Context="todoitem">
+        <a href="@($"simple/edit?id={todoitem.Id}")">Edit</a> |
+        <a href="@($"simple/details?id={todoitem.Id}")">Details</a> |
+        <a href="@($"simple/delete?id={todoitem.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private ToDosMgrContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
